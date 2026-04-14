@@ -2,3 +2,10 @@ __pycache__/
 *.pyc
 output/
 .DS_Store
+.codex
+data/snap/
+data/commoncrawl/
+output_from_hdfs/
+results/runs/
+results/final/*
+!results/final/README.md

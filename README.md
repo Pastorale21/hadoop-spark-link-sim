@@ -20,6 +20,32 @@
 - 本地模式只用于功能调试和样例演示
 - 集群模式才是项目的主要目标环境
 
+## 当前验证状态
+
+截至 `2026-04-14`，项目 MVP 已完成并通过两类样例验证：
+
+- 已在 `spark-submit --master local[*]` 下使用 `data/sample/edges_sample.txt` 验证通过
+- 已在真实 `HDFS + YARN` 环境下使用 sample 数据验证通过
+
+当前仓库内可直接看到两类验证痕迹：
+
+- 本地输出目录：`output/local_run`
+- HDFS 输出示例：`hdfs:///user/pastorale/linksim/output/run_sample`
+
+本次 YARN/HDFS 样例验证得到的 `topk_recommendations` 结果为：
+
+```text
+1 2 0.6666666667 1
+1 3 0.3333333333 2
+2 1 0.6666666667 1
+2 3 0.6666666667 2
+3 2 0.6666666667 1
+3 1 0.3333333333 2
+4 5 0.5000000000 1
+4 3 0.3333333333 2
+5 4 0.5000000000 1
+```
+
 ## 相似度定义
 
 设：
@@ -150,9 +176,19 @@ LinkSim/
 │       ├── cleaned_edges_example.txt
 │       ├── pair_similarity_example.txt
 │       └── topk_example.txt
+├── results/
+│   ├── README.md
+│   └── final/
+│       └── README.md
 ├── scripts/
 │   ├── run_local.sh
-│   └── run_hdfs.sh
+│   ├── run_hdfs.sh
+│   ├── export_final_result.sh
+│   └── run_snap_experiment.sh
+├── tests/
+│   ├── test_preprocess.py
+│   ├── test_similarity.py
+│   └── test_topk.py
 └── src/
     ├── main.py
     ├── preprocess.py
@@ -295,6 +331,82 @@ spark-submit \
 bash scripts/run_hdfs.sh
 ```
 
+当前环境中已验证通过的一次 YARN/HDFS 提交命令如下：
+
+```bash
+spark-submit \
+  --master yarn \
+  --deploy-mode client \
+  --conf spark.ui.enabled=false \
+  --py-files src/utils.py,src/preprocess.py,src/similarity.py,src/topk.py \
+  src/main.py \
+  --master yarn \
+  --input hdfs:///user/$USER/linksim/input/edges_sample.txt \
+  --output hdfs:///user/$USER/linksim/output/run_sample \
+  --topk 2 \
+  --write-intermediate
+```
+
+对应输出路径示例：
+
+```text
+hdfs:///user/pastorale/linksim/output/run_sample
+```
+
+查看输出的示例命令：
+
+```bash
+hdfs dfs -ls /user/$USER/linksim/output/run_sample
+hdfs dfs -ls /user/$USER/linksim/output/run_sample/topk_recommendations
+hdfs dfs -cat /user/$USER/linksim/output/run_sample/topk_recommendations/part-*
+```
+
+## SNAP web-NotreDame 实验说明
+
+正式实验阶段推荐使用 SNAP 的 `web-NotreDame` 数据集。当前仓库不直接附带该数据集，建议手动下载并解压到本地，再根据需要上传到 HDFS。
+
+推荐准备方式：
+
+```bash
+mkdir -p data/snap
+gunzip -c /path/to/web-NotreDame.txt.gz > data/snap/web-NotreDame.txt
+```
+
+说明：
+
+- SNAP 原始文件通常以注释行开头，例如 `#` 开头的说明信息
+- 当前预处理逻辑只保留恰好两个字段的边，因此这些注释行会被自动过滤
+- 数据集中的边行可直接作为本项目的 `src_id dst_id` 输入
+
+推荐使用正式实验脚本：
+
+```bash
+bash scripts/run_snap_experiment.sh
+```
+
+常见参数覆盖方式：
+
+```bash
+TOPK=20 MAX_REFERRERS_PER_DST=1000 bash scripts/run_snap_experiment.sh
+```
+
+如果数据已经提前上传到 HDFS，可关闭自动上传：
+
+```bash
+MASTER=yarn \
+UPLOAD_TO_HDFS=0 \
+INPUT_PATH=hdfs:///user/$USER/linksim/input/snap/web-NotreDame.txt \
+bash scripts/run_snap_experiment.sh
+```
+
+如果希望先在本地做小规模调试，可切到本地模式：
+
+```bash
+MASTER='local[*]' \
+SNAP_LOCAL_INPUT="$PWD/data/snap/web-NotreDame.txt" \
+bash scripts/run_snap_experiment.sh
+```
+
 ## 样例数据
 
 样例输入文件：`data/sample/edges_sample.txt`
@@ -366,6 +478,170 @@ bash scripts/run_hdfs.sh
 
 - `scripts/run_hdfs.sh`
   使用 `hdfs dfs` 上传样例数据，并用 `spark-submit --master yarn` 提交到集群
+
+- `scripts/export_final_result.sh`
+  将 HDFS 或本地输出目录整理为项目最终成果；可自动下载 Spark 输出目录，并合并 `topk_recommendations` 的多个 `part-*` 文件
+
+- `scripts/run_snap_experiment.sh`
+  用于 SNAP `web-NotreDame` 正式实验；支持本地或 YARN 运行，并在 `results/` 中记录实验参数、运行时间和输出路径
+
+## 已验证范围 / 未验证范围
+
+### 已验证范围
+
+- 本地模式：`spark-submit --master local[*]` 可基于 `data/sample/edges_sample.txt` 成功输出结果
+- HDFS 输入：`hdfs dfs -put` 上传 sample 数据后，程序可从 `hdfs:///...` 路径读取输入
+- YARN 提交：`spark-submit --master yarn --deploy-mode client` 已成功提交并完成 sample 作业
+- 输出目录：`cleaned_edges`、`pair_similarity`、`topk_recommendations` 已成功写入 HDFS
+- 输出结果：`topk_recommendations` 与 README 样例结果一致
+- 最小单元测试：已补充 `preprocess`、`similarity`、`topk` 三类本地 Spark 测试
+
+### 未验证范围
+
+- 大规模真实数据集上的性能、资源使用和数据倾斜表现
+- `--deploy-mode cluster` 的提交路径
+- `--max-referrers-per-dst` 在集群上的专项验证
+- 容错、重试、失败恢复和生产级监控
+- Parquet 等更高效输出格式和后续推荐扩展
+
+## 测试
+
+最小测试目录如下：
+
+- `tests/test_preprocess.py`
+- `tests/test_similarity.py`
+- `tests/test_topk.py`
+
+测试优先使用 PySpark 官方 testing 工具 `pyspark.testing.utils.assertDataFrameEqual`。
+
+如果当前 `python3` 环境已经通过 `requirements.txt` 安装了 `pyspark`，可直接运行：
+
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+```
+
+如果当前环境主要依赖 `SPARK_HOME` 下自带的 PySpark，而没有单独 `pip install pyspark`，可运行：
+
+```bash
+export PYTHONPATH="$PWD/src:$SPARK_HOME/python:$SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-0.10.9.9-src.zip${PYTHONPATH:+:$PYTHONPATH}"
+python3 -m unittest discover -s tests -v
+```
+
+当前三组测试覆盖：
+
+- `preprocess`：去空行、过滤非法行、去重
+- `similarity`：Jaccard 相似度计算
+- `topk`：排序规则与 Top-K 截断
+
+## 项目最终交付物
+
+从项目交付而不是单次实验的角度，本仓库最终应至少包含以下成果：
+
+- 可运行的 Hadoop + Spark 网站相似度计算代码
+- 可复现的 README 运行说明
+- 一份或多份可展示的最终结果文件
+- 对最终结果含义的说明
+
+其中，真正用于展示和提交的结果不应只停留在 HDFS 的 `part-*` 分片文件，而应整理为更容易查看的单文件成果。
+
+推荐的最终成果形态：
+
+```text
+results/final/
+└── <dataset_name>/
+    └── <run_id>/
+        ├── export_summary.txt
+        ├── topk_recommendations.txt
+        └── raw/
+            └── <run_id>/
+                └── topk_recommendations/
+```
+
+这里：
+
+- `topk_recommendations.txt`
+  是合并后的最终结果文件，适合课程展示、汇报和提交
+
+- `raw/`
+  保留 Spark 原始输出目录，便于追溯 `_SUCCESS` 和 `part-*` 文件
+
+## 导出项目最终结果
+
+如果结果已经写入 HDFS，可直接用下面的脚本导出并整理为单文件：
+
+```bash
+bash scripts/export_final_result.sh hdfs:///user/$USER/linksim/output/experiments/snap-web-NotreDame/20260414-151446
+```
+
+如果你刚刚通过 `scripts/run_snap_experiment.sh` 跑完，也可以不传参数，脚本会默认读取最近一次实验记录中的 `output_path`：
+
+```bash
+bash scripts/export_final_result.sh
+```
+
+导出后，最终成果默认位于：
+
+```text
+results/final/<dataset_name>/<run_id>/
+```
+
+你可以直接查看合并后的文件：
+
+```bash
+head -n 20 results/final/snap-web-NotreDame/20260414-151446/topk_recommendations.txt
+```
+
+如果输出原本是本地目录而不是 HDFS，脚本也支持直接整理本地路径：
+
+```bash
+bash scripts/export_final_result.sh ./output/local_run
+```
+
+## 实验结果
+
+### 当前已确认结果
+
+- sample 数据已在 `local[*]` 下跑通
+- sample 数据已在真实 `HDFS + YARN` 环境下跑通
+- YARN/HDFS 样例输出路径已验证为 `hdfs:///user/pastorale/linksim/output/run_sample`
+- `topk_recommendations` 样例输出与 README 中的预期结果一致
+
+### SNAP 正式实验记录方式
+
+本仓库将 SNAP 实验结果拆成两部分保存：
+
+- 计算结果：仍由 Spark 写入 `--output` 指定目录，本地或 HDFS 都可
+- 实验记录：由 `scripts/run_snap_experiment.sh` 写入本地 `results/` 目录
+
+推荐目录形态如下：
+
+```text
+results/
+└── runs/
+    └── 20260414-140500_snap-web-NotreDame/
+        ├── command.txt
+        ├── metadata.txt
+        └── spark_submit.log
+```
+
+其中 `metadata.txt` 重点记录：
+
+- 数据集名称
+- 运行模式
+- `topk`
+- `max-referrers-per-dst`
+- 运行时间
+- 输出路径
+
+完整设计说明见 `results/README.md`。
+
+## 局限性
+
+- 当前实验记录方案主要记录参数、输出路径和运行时长，还不包含 CPU、内存、shuffle、executor 级别的细粒度指标
+- SNAP 这类大图数据可能出现高入度目标节点带来的候选对膨胀，实验时常需要配合 `--max-referrers-per-dst`
+- 当前输出仍是文本目录，适合演示与课程提交，但在大规模实验下 I/O 成本高于 Parquet 等列式格式
+- 当前 README 记录了可复现实验步骤，但尚未内置自动下载 SNAP 数据集的流程
+- 当前项目重点是网站相似度计算 MVP，不包含后续更复杂的推荐评估指标与可视化分析
 
 ## 设计说明
 

@@ -1,0 +1,113 @@
+[Experiment] Dataset: snap-web-NotreDame
+[Experiment] Master: yarn
+[Experiment] Input: hdfs:///user/pastorale/linksim/input/snap/web-NotreDame.txt
+[Experiment] Output: hdfs:///user/pastorale/linksim/output/experiments/snap-web-NotreDame/20260414-151446
+[Experiment] Top-K: 20
+[Experiment] Max referrers per dst: 1000
+[Experiment] Write intermediate: 0
+[Experiment] Record dir: /home/pastorale/hadoop-spark-link-sim/results/runs/20260414-151446_snap-web-NotreDame
+[Experiment] Start time: 2026-04-14 15:14:49 +0800
+WARNING: Using incubator modules: jdk.incubator.vector
+26/04/14 15:14:52 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+26/04/14 15:14:53 INFO SparkContext: Running Spark version 4.1.1
+26/04/14 15:14:53 INFO SparkContext: OS info Linux, 5.15.0-161-generic, amd64
+26/04/14 15:14:53 INFO SparkContext: Java version 17.0.18+8-Ubuntu-122.04.1
+26/04/14 15:14:53 INFO ResourceUtils: ==============================================================
+26/04/14 15:14:53 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/04/14 15:14:53 INFO ResourceUtils: ==============================================================
+26/04/14 15:14:53 INFO SparkContext: Submitted application: LinkSimWebsiteSimilarity
+26/04/14 15:14:53 INFO SecurityManager: Changing view acls to: pastorale
+26/04/14 15:14:53 INFO SecurityManager: Changing modify acls to: pastorale
+26/04/14 15:14:53 INFO SecurityManager: Changing view acls groups to: pastorale
+26/04/14 15:14:53 INFO SecurityManager: Changing modify acls groups to: pastorale
+26/04/14 15:14:53 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: pastorale groups with view permissions: EMPTY; users with modify permissions: pastorale; groups with modify permissions: EMPTY; RPC SSL disabled
+26/04/14 15:14:53 INFO Utils: Successfully started service 'sparkDriver' on port 39989.
+26/04/14 15:14:53 INFO SparkEnv: Registering MapOutputTracker
+26/04/14 15:14:53 INFO SparkEnv: Registering BlockManagerMaster
+26/04/14 15:14:54 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/04/14 15:14:54 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/04/14 15:14:54 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/04/14 15:14:54 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-c33beb99-de49-44c1-a71e-e3ab7a70c877
+26/04/14 15:14:54 INFO SparkEnv: Registering OutputCommitCoordinator
+26/04/14 15:14:54 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/04/14 15:14:54 INFO ResourceProfile: Limiting resource is cpus at 1 tasks per executor
+26/04/14 15:14:54 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/04/14 15:14:54 INFO SecurityManager: Changing view acls to: pastorale
+26/04/14 15:14:54 INFO SecurityManager: Changing modify acls to: pastorale
+26/04/14 15:14:54 INFO SecurityManager: Changing view acls groups to: pastorale
+26/04/14 15:14:54 INFO SecurityManager: Changing modify acls groups to: pastorale
+26/04/14 15:14:54 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: pastorale groups with view permissions: EMPTY; users with modify permissions: pastorale; groups with modify permissions: EMPTY; RPC SSL disabled
+26/04/14 15:14:54 INFO DefaultNoHARMFailoverProxyProvider: Connecting to ResourceManager at master/192.168.0.109:8032
+26/04/14 15:14:55 INFO Configuration: resource-types.xml not found
+26/04/14 15:14:55 INFO ResourceUtils: Unable to find 'resource-types.xml'.
+26/04/14 15:14:55 INFO Client: Verifying our application has not requested more than the maximum memory capability of the cluster (8192 MB per container)
+26/04/14 15:14:55 INFO Client: Will allocate AM container, with 896 MB memory including 384 MB overhead
+26/04/14 15:14:55 INFO Client: Setting up container launch context for our AM
+26/04/14 15:14:55 INFO Client: Setting up the launch environment for our AM container
+26/04/14 15:14:55 INFO Client: Preparing resources for our AM container
+26/04/14 15:14:55 WARN Client: Neither spark.yarn.jars nor spark.yarn.archive is set, falling back to uploading libraries under SPARK_HOME.
+26/04/14 15:15:01 INFO Client: Uploading resource file:/tmp/spark-d915270a-0256-411f-aa53-62ad0b4ea304/__spark_libs__13102663076688765096.zip -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/__spark_libs__13102663076688765096.zip
+26/04/14 15:15:02 INFO Client: Uploading resource file:/home/pastorale/spark/python/lib/pyspark.zip -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/pyspark.zip
+26/04/14 15:15:02 INFO Client: Uploading resource file:/home/pastorale/spark/python/lib/py4j-0.10.9.9-src.zip -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/py4j-0.10.9.9-src.zip
+26/04/14 15:15:02 INFO Client: Uploading resource file:/home/pastorale/hadoop-spark-link-sim/src/utils.py -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/utils.py
+26/04/14 15:15:02 INFO Client: Uploading resource file:/home/pastorale/hadoop-spark-link-sim/src/preprocess.py -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/preprocess.py
+26/04/14 15:15:02 INFO Client: Uploading resource file:/home/pastorale/hadoop-spark-link-sim/src/similarity.py -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/similarity.py
+26/04/14 15:15:02 INFO Client: Uploading resource file:/home/pastorale/hadoop-spark-link-sim/src/topk.py -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/topk.py
+26/04/14 15:15:02 INFO Client: Uploading resource file:/tmp/spark-d915270a-0256-411f-aa53-62ad0b4ea304/__spark_conf__14627042292226711180.zip -> hdfs://master:9000/user/pastorale/.sparkStaging/application_1776150688643_0001/__spark_conf__.zip
+26/04/14 15:15:02 INFO SecurityManager: Changing view acls to: pastorale
+26/04/14 15:15:02 INFO SecurityManager: Changing modify acls to: pastorale
+26/04/14 15:15:02 INFO SecurityManager: Changing view acls groups to: pastorale
+26/04/14 15:15:02 INFO SecurityManager: Changing modify acls groups to: pastorale
+26/04/14 15:15:02 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: pastorale groups with view permissions: EMPTY; users with modify permissions: pastorale; groups with modify permissions: EMPTY; RPC SSL disabled
+26/04/14 15:15:02 INFO Client: Submitting application application_1776150688643_0001 to ResourceManager
+26/04/14 15:15:02 INFO YarnClientImpl: Submitted application application_1776150688643_0001
+26/04/14 15:15:03 INFO Client: Application report for application_1776150688643_0001 (state: ACCEPTED)
+26/04/14 15:15:03 INFO Client: 
+	 client token: N/A
+	 diagnostics: AM container is launched, waiting for AM container to Register with RM
+	 ApplicationMaster host: N/A
+	 ApplicationMaster RPC port: -1
+	 queue: root.default
+	 start time: 1776150902566
+	 final status: UNDEFINED
+	 tracking URL: http://master:8088/proxy/application_1776150688643_0001/
+	 user: pastorale
+26/04/14 15:15:07 INFO Client: Application report for application_1776150688643_0001 (state: RUNNING)
+26/04/14 15:15:07 INFO Client: 
+	 client token: N/A
+	 diagnostics: N/A
+	 ApplicationMaster host: 192.168.0.193
+	 ApplicationMaster RPC port: -1
+	 queue: root.default
+	 start time: 1776150902566
+	 final status: UNDEFINED
+	 tracking URL: http://master:8088/proxy/application_1776150688643_0001/
+	 user: pastorale
+26/04/14 15:15:07 INFO YarnClientSchedulerBackend: Application application_1776150688643_0001 has started running.
+26/04/14 15:15:07 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 42645.
+26/04/14 15:15:07 INFO NettyBlockTransferService: Server created on master:42645
+26/04/14 15:15:07 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/04/14 15:15:07 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, master, 42645, None)
+26/04/14 15:15:07 INFO BlockManagerMasterEndpoint: Registering block manager master:42645 with 434.4 MiB RAM, BlockManagerId(driver, master, 42645, None)
+26/04/14 15:15:07 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, master, 42645, None)
+26/04/14 15:15:07 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, master, 42645, None)
+26/04/14 15:15:08 INFO YarnClientSchedulerBackend: Add WebUI Filter. org.apache.spark.deploy.yarn.AmIpFilter, Map(PROXY_HOSTS -> master, PROXY_URI_BASES -> http://master:8088/proxy/application_1776150688643_0001), /proxy/application_1776150688643_0001
+26/04/14 15:15:08 INFO YarnSchedulerBackend$YarnSchedulerEndpoint: ApplicationMaster registered as NettyRpcEndpointRef(spark-client://YarnAM)
+26/04/14 15:15:13 INFO YarnSchedulerBackend$YarnDriverEndpoint: Registered executor NettyRpcEndpointRef(spark-client://Executor) (192.168.0.226:56996) with ID 2, ResourceProfileId 0
+26/04/14 15:15:13 INFO YarnSchedulerBackend$YarnDriverEndpoint: Registered executor NettyRpcEndpointRef(spark-client://Executor) (192.168.0.226:56998) with ID 1, ResourceProfileId 0
+26/04/14 15:15:13 INFO YarnClientSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.8
+26/04/14 15:15:13 INFO BlockManagerMasterEndpoint: Registering block manager node1:33279 with 434.4 MiB RAM, BlockManagerId(2, node1, 33279, None)
+26/04/14 15:15:13 INFO BlockManagerMasterEndpoint: Registering block manager node1:35803 with 434.4 MiB RAM, BlockManagerId(1, node1, 35803, None)
+[LinkSim] Requested Spark master: yarn
+[LinkSim] Effective Spark master: yarn
+[LinkSim] Input path (raw): hdfs:///user/pastorale/linksim/input/snap/web-NotreDame.txt
+[LinkSim] Input path (resolved): hdfs:///user/pastorale/linksim/input/snap/web-NotreDame.txt
+[LinkSim] Output root (raw): hdfs:///user/pastorale/linksim/output/experiments/snap-web-NotreDame/20260414-151446
+[LinkSim] Output root (resolved): hdfs:///user/pastorale/linksim/output/experiments/snap-web-NotreDame/20260414-151446
+[LinkSim] Top-K: 20
+[LinkSim] Write intermediate: False
+[LinkSim] Max referrers per dst: 1000
+[Experiment] Status: SUCCEEDED
+[Experiment] Duration (seconds): 383
+[Experiment] Metadata saved to: /home/pastorale/hadoop-spark-link-sim/results/runs/20260414-151446_snap-web-NotreDame/metadata.txt

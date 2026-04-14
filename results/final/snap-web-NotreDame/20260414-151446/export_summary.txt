@@ -1,0 +1,11 @@
+dataset_name=snap-web-NotreDame
+run_id=20260414-151446
+source_output_path=hdfs:///user/pastorale/linksim/output/experiments/snap-web-NotreDame/20260414-151446
+local_export_dir=/home/pastorale/hadoop-spark-link-sim/results/final/snap-web-NotreDame/20260414-151446
+topk_file=/home/pastorale/hadoop-spark-link-sim/results/final/snap-web-NotreDame/20260414-151446/topk_recommendations.txt
+topk_line_count=2164551
+pair_similarity_file=/home/pastorale/hadoop-spark-link-sim/results/final/snap-web-NotreDame/20260414-151446/pair_similarity.txt
+pair_similarity_line_count=0
+cleaned_edges_file=/home/pastorale/hadoop-spark-link-sim/results/final/snap-web-NotreDame/20260414-151446/cleaned_edges.txt
+cleaned_edges_line_count=0
+exported_at=2026-04-14 16:03:51 +0800

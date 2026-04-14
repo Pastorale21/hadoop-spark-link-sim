@@ -1,0 +1,14 @@
+dataset_name=snap-web-NotreDame
+master=yarn
+deploy_mode=client
+topk=20
+max_referrers_per_dst=1000
+write_intermediate=0
+status=SUCCEEDED
+start_time=2026-04-14 15:14:49 +0800
+end_time=2026-04-14 15:21:12 +0800
+duration_seconds=383
+input_path=hdfs:///user/pastorale/linksim/input/snap/web-NotreDame.txt
+output_path=hdfs:///user/pastorale/linksim/output/experiments/snap-web-NotreDame/20260414-151446
+record_dir=/home/pastorale/hadoop-spark-link-sim/results/runs/20260414-151446_snap-web-NotreDame
+log_file=/home/pastorale/hadoop-spark-link-sim/results/runs/20260414-151446_snap-web-NotreDame/spark_submit.log

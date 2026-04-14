@@ -241,6 +241,12 @@ spark-submit \
 bash scripts/run_local.sh
 ```
 
+说明：
+
+- 如果 Hadoop 配置中的 `fs.defaultFS` 指向 HDFS，裸路径如 `data/sample/edges_sample.txt` 可能被错误解析为 HDFS 路径
+- 当前程序会自动把未带协议的本地路径规范化为 `file://绝对路径`
+- 因此本地调试时可以直接传相对路径，也可以显式写成 `file:///absolute/path/to/edges_sample.txt`
+
 ## HDFS 上传与下载命令
 
 以下命令统一使用 `hdfs dfs`。

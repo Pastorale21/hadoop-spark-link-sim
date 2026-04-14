@@ -1,3 +1,5 @@
+import os
+import re
 from typing import Iterable, Union
 
 from pyspark.sql import Column, DataFrame, SparkSession
@@ -6,6 +8,7 @@ from pyspark.sql import functions as F
 
 NUMERIC_ID_PATTERN = r"^[+-]?[0-9]+$"
 DECIMAL_ID_TYPE = "decimal(38, 0)"
+URI_SCHEME_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9+.\-]*://")
 
 
 def build_spark_session(app_name: str, master: str) -> SparkSession:
@@ -22,6 +25,21 @@ def build_spark_session(app_name: str, master: str) -> SparkSession:
 def output_path(root: str, child: str) -> str:
     """Join local or hdfs-style output paths without breaking URI schemes."""
     return root.rstrip("/") + "/" + child.lstrip("/")
+
+
+def normalize_data_path(path: str) -> str:
+    """
+    Normalize input/output paths for Spark.
+
+    - Explicit URIs such as hdfs:///..., s3://..., file:///... are preserved.
+    - Bare local paths are converted to absolute file:// URIs so they are not
+      accidentally resolved against fs.defaultFS in Hadoop configs.
+    """
+    if URI_SCHEME_PATTERN.match(path):
+        return path
+
+    absolute_path = os.path.abspath(path)
+    return f"file://{absolute_path}"
 
 
 def _as_column(column_or_name: Union[Column, str]) -> Column:

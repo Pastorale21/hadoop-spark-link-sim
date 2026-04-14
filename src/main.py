@@ -8,6 +8,7 @@ from topk import compute_topk_recommendations
 from utils import (
     build_spark_session,
     format_similarity,
+    normalize_data_path,
     output_path,
     stable_sort_columns,
     write_space_separated_text,
@@ -108,17 +109,22 @@ def main() -> None:
     args = parse_args()
     validate_args(args)
 
+    input_path = normalize_data_path(args.input)
+    output_root = normalize_data_path(args.output)
+
     spark = build_spark_session(APP_NAME, args.master)
 
     print(f"[LinkSim] Requested Spark master: {args.master}")
     print(f"[LinkSim] Effective Spark master: {spark.sparkContext.master}")
-    print(f"[LinkSim] Input path: {args.input}")
-    print(f"[LinkSim] Output root: {args.output}")
+    print(f"[LinkSim] Input path (raw): {args.input}")
+    print(f"[LinkSim] Input path (resolved): {input_path}")
+    print(f"[LinkSim] Output root (raw): {args.output}")
+    print(f"[LinkSim] Output root (resolved): {output_root}")
     print(f"[LinkSim] Top-K: {args.topk}")
     print(f"[LinkSim] Write intermediate: {args.write_intermediate}")
     print(f"[LinkSim] Max referrers per dst: {args.max_referrers_per_dst}")
 
-    cleaned_edges = preprocess_edges(spark, args.input).persist(
+    cleaned_edges = preprocess_edges(spark, input_path).persist(
         StorageLevel.MEMORY_AND_DISK
     )
     pair_similarity = compute_pair_similarity(
@@ -128,10 +134,10 @@ def main() -> None:
     topk_result = compute_topk_recommendations(pair_similarity, args.topk)
 
     if args.write_intermediate:
-        write_cleaned_edges(cleaned_edges, args.output)
-        write_pair_similarity(pair_similarity, args.output)
+        write_cleaned_edges(cleaned_edges, output_root)
+        write_pair_similarity(pair_similarity, output_root)
 
-    write_topk(topk_result, args.output)
+    write_topk(topk_result, output_root)
 
     pair_similarity.unpersist()
     cleaned_edges.unpersist()
